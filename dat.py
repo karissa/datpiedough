@@ -1,5 +1,4 @@
 import subprocess
-import time
 import cPickle
 
 try:
@@ -28,8 +27,12 @@ def clone(URL, path, **kwargs):
   """
   p = process("dat clone {0} {1}".format(URL, path), kwargs)
   stdout, stderr = p.communicate()
-  if (p.returncode == 0):
+  if p.returncode == 0:
     return Dat(path)
+  elif p.returncode == 127:
+    print("It looks like `dat` commandline is missing from PATH.\n",
+          "Are you sure you installed it?\n"
+          "Check http://dat-data.com for instructions")
   else:
    return p.returncode
 
