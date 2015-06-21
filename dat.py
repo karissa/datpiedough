@@ -30,9 +30,9 @@ def clone(URL, path, **kwargs):
   if p.returncode == 0:
     return Dat(path)
   elif p.returncode == 127:
-    print("It looks like `dat` commandline is missing from PATH.\n",
-          "Are you sure you installed it?\n"
-          "Check http://dat-data.com for instructions")
+    raise Exception("It looks like `dat` commandline is missing from PATH.\n",
+                    "Are you sure you installed it?\n"
+                    "Check http://dat-data.com for instructions")
   else:
    return p.returncode
 
