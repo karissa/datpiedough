@@ -119,21 +119,21 @@ def process(cmd, opts):
     if opts is None:
         opts = {}
 
-        cmd += ' --json '
+    cmd += ' --json '
 
-        for key, val in opts.iteritems():
-            if (len(key) == 1):
-                cmd += " -{0} {1}".format(key, val)
-            else:
-                cmd += " --{0}={1}".format(key, val)
+    for key, val in opts.iteritems():
+        if (len(key) == 1):
+            cmd += " -{0} {1}".format(key, val)
+        else:
+            cmd += " --{0}={1}".format(key, val)
 
-                return subprocess.Popen(
-                    cmd,
-                    stdout=subprocess.PIPE,
-                    stdin=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    shell=True
-                )
+    return subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stdin=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True
+    )
 
 
 def stream_in(p, data, parse=True):
@@ -171,13 +171,13 @@ def stream_out(cmd, opts=None, parse=True):
 
     if parse:
         res = []
-    for line in iter(p.stdout.readline, ''):
-        parsed = json.loads(line.rstrip())
-        res.append(parsed)
+        for line in iter(p.stdout.readline, ''):
+            parsed = json.loads(line.rstrip())
+            res.append(parsed)
     else:
         res = ''
-    for line in iter(p.stdout.readline, ''):
-        res += line
+        for line in iter(p.stdout.readline, ''):
+            res += line
 
-        subprocess.Popen.terminate(p)
-        return res
+    subprocess.Popen.terminate(p)
+    return res
