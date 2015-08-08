@@ -1,6 +1,9 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+import pickle
 import subprocess
 import time
-import cPickle
 
 try:
   import ujson as json
@@ -32,7 +35,7 @@ def returns_version(func):
 
   return inner
 
-class Dat:
+class Dat(object):
 
   def __init__(self, path=None):
     self.path = path
@@ -83,7 +86,7 @@ class Dat:
   def dataset(self, name):
     return Dataset(self, name)
 
-class Dataset:
+class Dataset(object):
 
   def __init__(self, dat, dataset):
     self.dat = dat
@@ -92,7 +95,9 @@ class Dataset:
   def keys(self, **kwargs):
     p = self.process("dat keys", kwargs)
     res = stream_out(p)
-    return res['keys']
+    if 'keys' in res:
+      return res['keys']
+    return res
 
   @returns_version
   def import_file(self, filename, **kwargs):
@@ -142,7 +147,7 @@ def process(cmd, opts):
 
   cmd += ' --json '
 
-  for key, val in opts.iteritems():
+  for key, val in opts.items():
     if (len(key) == 1):
       cmd += " -{0} {1}".format(key, val)
     else:
@@ -162,11 +167,13 @@ def stream_in(p, data):
     TODO: if true, will try to parse the output from python generator or list
 
   """
+  if isinstance(data, str):
+    data = data.encode()
   stdout, stderr = p.communicate(input=data)
   if p.returncode == 1:
     raise DatException('Node.js error: ' + stderr)
   else:
-    res = json.loads(stdout)
+    res = json.loads(stdout.decode())
     if type(res) == object and res.get('error'):
       return on_error(res)
     return res
@@ -183,11 +190,11 @@ def stream_out(p, parse=True):
     to parse the file into json
   """
   res = []
-  for line in iter(p.stdout.readline, ''):
+  for line in iter(p.stdout.readline, b''):
     if parse:
-      line = json.loads(line.rstrip())
+      line = json.loads(line.decode().rstrip())
     else:
-      line = line
+      line = line.decode()
     res.append(line)
 
   if len(res) == 1:
