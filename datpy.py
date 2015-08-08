@@ -1,6 +1,9 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+import pickle
 import subprocess
 import time
-import cPickle
 
 try:
   import ujson as json
@@ -32,7 +35,7 @@ def returns_version(func):
 
   return inner
 
-class Dat:
+class Dat(object):
 
   def __init__(self, path=None):
     self.path = path
@@ -83,7 +86,7 @@ class Dat:
   def dataset(self, name):
     return Dataset(self, name)
 
-class Dataset:
+class Dataset(object):
 
   def __init__(self, dat, dataset):
     self.dat = dat
@@ -144,7 +147,7 @@ def process(cmd, opts):
 
   cmd += ' --json '
 
-  for key, val in opts.iteritems():
+  for key, val in opts.items():
     if (len(key) == 1):
       cmd += " -{0} {1}".format(key, val)
     else:

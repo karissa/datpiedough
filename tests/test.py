@@ -1,6 +1,9 @@
-import unittest
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import json
-import cPickle
+import pickle
+import unittest
 
 from datpy import Dat, Dataset
 
@@ -83,12 +86,12 @@ class IOTests(DatTest):
       "hello": "mars",
       "goodbye": "world"
     }
-    data = cPickle.dumps(my_python_object)
+    data = pickle.dumps(my_python_object)
     version = self.dat.write("helloworld.pickle", data=data)
     self.assertEqual(len(version), 64)
 
     data = self.dat.read("helloworld.pickle")
-    obj = cPickle.loads(data)
+    obj = pickle.loads(data)
     self.assertEqual(type(obj), dict)
     self.assertEqual(obj["hello"], "mars")
 
@@ -112,7 +115,7 @@ class TestPandas(DatTest):
     self.assertEqual(len(output), 770)
 
     df = dataset.export_dataframe()
-    keys = dataset.keys()
+    keys = list(dataset.keys())
     df['key'] = pd.Series(keys)
 
     # modify a column
